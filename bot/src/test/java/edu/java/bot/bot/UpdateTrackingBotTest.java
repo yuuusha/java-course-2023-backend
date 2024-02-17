@@ -2,14 +2,11 @@ package edu.java.bot.bot;
 
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.request.SendMessage;
-import edu.java.bot.bot.UpdateTrackingBot;
 import edu.java.bot.processors.BotMessageProcessor;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.springframework.boot.test.context.SpringBootTest;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
-@SpringBootTest
 public class UpdateTrackingBotTest {
     @Test
     public void startTest() {

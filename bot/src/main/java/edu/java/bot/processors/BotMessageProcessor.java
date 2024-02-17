@@ -27,19 +27,19 @@ public class BotMessageProcessor implements MessageProcessor {
 
     @Override
     public SendMessage process(Update update) {
-        if (update.message() == null || update.message().text() == null) {
-            return null;
-        }
-        for (Command command : commands()) {
-            if (update.message() != null && update.message().text() != null) {
-                String userCommand = update.message().text().trim();
-                String botCommand = command.command();
-                String firstWordOfUserCommand = userCommand.split("\\s+")[0];
-                if (firstWordOfUserCommand.equals(botCommand)) {
-                    return command.handle(update);
+        if (update.message() != null && update.message().text() != null) {
+            for (Command command : commands()) {
+                if (update.message() != null && update.message().text() != null) {
+                    String userCommand = update.message().text().trim();
+                    String botCommand = command.command();
+                    String firstWordOfUserCommand = userCommand.split("\\s+")[0];
+                    if (firstWordOfUserCommand.equals(botCommand)) {
+                        return command.handle(update);
+                    }
                 }
             }
+            return new SendMessage(update.message().chat().id(), textProcessor.process("message.unknown_command"));
         }
-        return new SendMessage(update.message().chat().id(), textProcessor.process("message.unknown_command"));
+        return null;
     }
 }

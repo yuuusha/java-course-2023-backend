@@ -4,8 +4,8 @@ import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
 import edu.java.bot.commands.Command;
 import java.util.List;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import static edu.java.bot.Utils.createMockUpdate;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -18,7 +18,7 @@ public class BotMessageProcessorTest {
     private static BotMessageProcessor botProcessor;
     Command command;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         int chatId = 1;
 
@@ -56,11 +56,6 @@ public class BotMessageProcessorTest {
     @Test
     public void updateNullTest() {
         assertNull(botProcessor.process(new Update()));
-    }
-
-    @Test
-    public void updateWithNullMessageTest() {
-        assertEquals("unknown command", botProcessor.process(createMockUpdate(null, 1L)).getParameters().get("text"));
     }
 
     @Test

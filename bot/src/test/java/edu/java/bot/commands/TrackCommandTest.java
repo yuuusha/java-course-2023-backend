@@ -2,13 +2,10 @@ package edu.java.bot.commands;
 
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
-import edu.java.bot.managers.Link;
 import edu.java.bot.managers.UsersLinksManager;
 import edu.java.bot.processors.TextProcessor;
-import org.junit.Before;
-import org.junit.Test;
 import org.junit.jupiter.api.BeforeEach;
-import org.mockito.Mock;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import static edu.java.bot.Utils.createMockUpdate;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -21,7 +18,7 @@ public class TrackCommandTest {
 
     static TextProcessor textProcessor;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         textProcessor = Mockito.mock(TextProcessor.class);
         linkManager = Mockito.mock(UsersLinksManager.class);
