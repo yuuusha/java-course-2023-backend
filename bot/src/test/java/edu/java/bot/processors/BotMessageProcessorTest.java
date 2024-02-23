@@ -26,7 +26,7 @@ public class BotMessageProcessorTest {
         Mockito.when(textProcessor.process(Mockito.anyString())).thenReturn("unknown command");
 
         command = Mockito.mock(Command.class);
-        Mockito.when(command.command()).thenReturn("/command");
+        Mockito.when(command.getCommandName()).thenReturn("/command");
         Mockito.when(command.handle(Mockito.any())).thenReturn(new SendMessage(chatId, "message"));
 
         botProcessor = new BotMessageProcessor(List.of(command), textProcessor);
@@ -44,7 +44,7 @@ public class BotMessageProcessorTest {
 
     @Test
     public void commandsTest() {
-        assertTrue(botProcessor.commands().stream().allMatch(command -> command.command().equals("/command")));
+        assertTrue(botProcessor.commands().stream().allMatch(command -> command.getCommandName().equals("/command")));
     }
 
     @Test

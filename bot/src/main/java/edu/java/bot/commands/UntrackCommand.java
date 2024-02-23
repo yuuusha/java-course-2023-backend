@@ -15,7 +15,7 @@ public class UntrackCommand extends CommonCommand {
     }
 
     @Override
-    public String command() {
+    public String getCommandName() {
         return "/untrack";
     }
 

@@ -16,7 +16,7 @@ public class HelpCommand extends CommonCommand {
     }
 
     @Override
-    public String command() {
+    public String getCommandName() {
         return "/help";
     }
 

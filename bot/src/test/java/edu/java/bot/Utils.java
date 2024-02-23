@@ -4,7 +4,10 @@ import com.pengrad.telegrambot.model.Chat;
 import com.pengrad.telegrambot.model.Message;
 import com.pengrad.telegrambot.model.Update;
 import org.mockito.Mockito;
+import org.springframework.beans.factory.config.YamlPropertiesFactoryBean;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
+import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.core.io.ClassPathResource;
 
 public class Utils {
 
@@ -34,10 +37,11 @@ public class Utils {
         return update;
     }
 
-    public static ReloadableResourceBundleMessageSource messageSource() {
-        ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
-        messageSource.setBasename("classpath:messages");
-        messageSource.setDefaultEncoding("UTF-8");
-        return messageSource;
+    public static ResourceBundleMessageSource messageSource() {
+        ResourceBundleMessageSource messageSourceResourceBundle = new ResourceBundleMessageSource();
+        YamlPropertiesFactoryBean yamlPropertiesFactoryBean = new YamlPropertiesFactoryBean();
+        yamlPropertiesFactoryBean.setResources(new ClassPathResource("message.yml"));
+        messageSourceResourceBundle.setCommonMessages(yamlPropertiesFactoryBean.getObject());
+        return messageSourceResourceBundle;
     }
 }

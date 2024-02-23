@@ -1,8 +1,8 @@
 package edu.java.bot.managers;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Objects;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public record Link(String url) {
 
@@ -22,10 +22,12 @@ public record Link(String url) {
         return Objects.hash(url);
     }
 
-    public static boolean isURL(String url) {
-        String regex = "^(https?)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]";
-        Pattern pattern = Pattern.compile(regex);
-        Matcher matcher = pattern.matcher(url);
-        return matcher.matches();
+    public static boolean isURL(String urlString) {
+        try {
+            URL url = new URL(urlString);
+            return true;
+        } catch (MalformedURLException e) {
+            return false;
+        }
     }
 }

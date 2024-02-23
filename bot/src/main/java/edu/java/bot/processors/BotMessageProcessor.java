@@ -4,7 +4,6 @@ import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
 import edu.java.bot.commands.Command;
 import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -14,7 +13,6 @@ public class BotMessageProcessor implements MessageProcessor {
 
     private final TextProcessor textProcessor;
 
-    @Autowired
     public BotMessageProcessor(List<Command> commands, TextProcessor textProcessor) {
         this.commands = commands;
         this.textProcessor = textProcessor;
@@ -28,17 +26,17 @@ public class BotMessageProcessor implements MessageProcessor {
     @Override
     public SendMessage process(Update update) {
         if (update.message() != null && update.message().text() != null) {
+            SendMessage result =
+                new SendMessage(update.message().chat().id(), textProcessor.process("message.unknown_command"));
             for (Command command : commands()) {
-                if (update.message() != null && update.message().text() != null) {
-                    String userCommand = update.message().text().trim();
-                    String botCommand = command.command();
-                    String firstWordOfUserCommand = userCommand.split("\\s+")[0];
-                    if (firstWordOfUserCommand.equals(botCommand)) {
-                        return command.handle(update);
-                    }
+                String userCommand = update.message().text().trim();
+                String botCommand = command.getCommandName();
+                String firstWordOfUserCommand = userCommand.split("\\s+")[0];
+                if (firstWordOfUserCommand.equals(botCommand)) {
+                    result = command.handle(update);
                 }
             }
-            return new SendMessage(update.message().chat().id(), textProcessor.process("message.unknown_command"));
+            return result;
         }
         return null;
     }

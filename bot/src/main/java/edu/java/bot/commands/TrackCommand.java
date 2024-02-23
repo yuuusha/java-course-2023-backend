@@ -17,7 +17,7 @@ public class TrackCommand extends CommonCommand {
     }
 
     @Override
-    public String command() {
+    public String getCommandName() {
         return "/track";
     }
 

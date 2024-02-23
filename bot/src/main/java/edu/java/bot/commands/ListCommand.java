@@ -18,7 +18,7 @@ public class ListCommand extends CommonCommand {
     }
 
     @Override
-    public String command() {
+    public String getCommandName() {
         return "/list";
     }
 
@@ -35,10 +35,8 @@ public class ListCommand extends CommonCommand {
             return new SendMessage(chatId, textProcessor.process("command.list.empty"));
         }
         StringBuilder response = new StringBuilder();
-        Integer n = 1;
-        for (Link link : linkList) {
-            response.append("\n").append(n).append(". ").append(link.url());
-            n++;
+        for (int i = 0; i < linkList.size(); i++) {
+            response.append("\n").append(i + 1).append(". ").append(linkList.get(i).url());
         }
         return new SendMessage(chatId, String.format(textProcessor.process("command.list.get"), response));
     }

@@ -2,21 +2,21 @@ package edu.java.bot.processors;
 
 import java.util.Locale;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
+import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Component;
 
 @Component
 public class BotTextProcessor implements TextProcessor {
 
-    private final MessageSource messageSource;
+    private final ResourceBundleMessageSource resourceBundleMessageSource;
 
     @Autowired
-    public BotTextProcessor(MessageSource messageSource) {
-        this.messageSource = messageSource;
+    public BotTextProcessor(ResourceBundleMessageSource resourceBundleMessageSource) {
+        this.resourceBundleMessageSource = resourceBundleMessageSource;
     }
 
     @Override
     public String process(String messageKey) {
-        return messageSource.getMessage(messageKey, null, Locale.of("ru"));
+        return resourceBundleMessageSource.getMessage(messageKey, null, Locale.of("ru"));
     }
 }
