@@ -1,29 +1,26 @@
 package edu.java.contributor.sources;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import edu.java.contributor.api.Info;
-import edu.java.contributor.api.WebClientInfoContributor;
+import edu.java.contributor.api.WebClientInfoProvider;
+import edu.java.contributor.sources.response.StackOverflowInfoResponse;
 import java.net.URL;
-import java.time.OffsetDateTime;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 
-@Component
-public class StackOverflowInfoContributor extends WebClientInfoContributor {
+public class StackOverflowInfoProvider extends WebClientInfoProvider {
+
+    private static final String STACKOVERFLOW_API_LINK = "https://api.stackexchange.com/2.3";
     private static final Pattern QUESTION_PATTERN = Pattern.compile("https://stackoverflow.com/questions/(\\d+).*");
 
-    @Autowired
-    public StackOverflowInfoContributor(
-        @Value("${contributor.stackoverflow.url}") String apiUrl
+    public StackOverflowInfoProvider(
+        @Value("${provider.stackoverflow.url}") String apiUrl
     ) {
         super(apiUrl);
     }
 
-    public StackOverflowInfoContributor() {
-        super("https://api.stackexchange.com/2.3");
+    public StackOverflowInfoProvider() {
+        super(STACKOVERFLOW_API_LINK);
     }
 
     @Override
@@ -38,9 +35,10 @@ public class StackOverflowInfoContributor extends WebClientInfoContributor {
 
     @Override
     public Info getInfo(URL url) {
+        Info infoNull = new Info(null, null, null, null);
         Matcher matcher = QUESTION_PATTERN.matcher(url.toString());
         if (!matcher.matches()) {
-            return null;
+            return infoNull;
         }
         var questionId = matcher.group(1);
         var info = executeRequest(
@@ -48,16 +46,9 @@ public class StackOverflowInfoContributor extends WebClientInfoContributor {
             StackOverflowInfoResponse.class,
             StackOverflowInfoResponse.EMPTY
         );
-        if (info == null || info.equals(StackOverflowInfoResponse.EMPTY) || info.items.length == 0) {
-            return null;
+        if (info == null || info.equals(StackOverflowInfoResponse.EMPTY) || info.items().length == 0) {
+            return infoNull;
         }
         return new Info(url, info.items()[0].title(), null, info.items()[0].lastModified());
-    }
-
-    private record StackOverflowInfoResponse(StackOverflowItem[] items) {
-        public static final StackOverflowInfoResponse EMPTY = new StackOverflowInfoResponse(null);
-    }
-
-    private record StackOverflowItem(String title, @JsonProperty("last_activity_date") OffsetDateTime lastModified) {
     }
 }

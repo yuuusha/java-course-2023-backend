@@ -2,7 +2,7 @@ package edu.java.scrapper.contributors.sources;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 import edu.java.contributor.api.Info;
-import edu.java.contributor.sources.GithubInfoContributor;
+import edu.java.contributor.sources.GithubInfoProvider;
 import java.net.URL;
 import lombok.SneakyThrows;
 import org.assertj.core.api.Assertions;
@@ -13,7 +13,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 
-public class GithubInformationContributorTest {
+public class GithubInformationProviderTest {
 
     private static WireMockServer server;
 
@@ -43,7 +43,7 @@ public class GithubInformationContributorTest {
     @SneakyThrows
     @Test
     public void getInfoCorrect() {
-        GithubInfoContributor contributor = new GithubInfoContributor(server.baseUrl());
+        GithubInfoProvider contributor = new GithubInfoProvider(server.baseUrl());
         var info = contributor.getInfo(new URL("https://github.com/yuuusha/java-course-2023"));
         Assertions.assertThat(info)
             .extracting(Info::url, Info::title, Info::description)
@@ -57,24 +57,24 @@ public class GithubInformationContributorTest {
     @SneakyThrows
     @Test
     public void getInfoNotFound() {
-        GithubInfoContributor contributor = new GithubInfoContributor(server.baseUrl());
-        var info = contributor.getInfo(new URL("https://github.com/err/err"));
-        Assertions.assertThat(info).isNull();
+        GithubInfoProvider provider = new GithubInfoProvider(server.baseUrl());
+        var info = provider.getInfo(new URL("https://github.com/err/err"));
+        Assertions.assertThat(info).isEqualTo(new Info(null, null, null, null));
     }
 
     @SneakyThrows
     @Test
     public void isSupportedTrue() {
-        GithubInfoContributor contributor = new GithubInfoContributor(server.baseUrl());
-        var info = contributor.isSupported(new URL("https://github.com/err/err"));
+        GithubInfoProvider provider = new GithubInfoProvider(server.baseUrl());
+        var info = provider.isSupported(new URL("https://github.com/err/err"));
         Assertions.assertThat(info).isTrue();
     }
 
     @SneakyThrows
     @Test
     public void isSupportedFalse() {
-        GithubInfoContributor contributor = new GithubInfoContributor(server.baseUrl());
-        var info = contributor.isSupported(new URL("https://gitlab.com/err/err"));
+        GithubInfoProvider provider = new GithubInfoProvider(server.baseUrl());
+        var info = provider.isSupported(new URL("https://gitlab.com/err/err"));
         Assertions.assertThat(info).isFalse();
     }
 

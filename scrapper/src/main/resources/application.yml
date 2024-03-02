@@ -3,7 +3,7 @@ app:
     interval: 10s
     delay: 10s
 
-contributor:
+provider:
   github:
     url: https://api.github.com
   stackoverflow:

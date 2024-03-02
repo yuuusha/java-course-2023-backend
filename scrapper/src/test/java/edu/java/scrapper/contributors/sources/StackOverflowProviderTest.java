@@ -2,7 +2,7 @@ package edu.java.scrapper.contributors.sources;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 import edu.java.contributor.api.Info;
-import edu.java.contributor.sources.StackOverflowInfoContributor;
+import edu.java.contributor.sources.StackOverflowInfoProvider;
 import java.net.URL;
 import lombok.SneakyThrows;
 import org.assertj.core.api.Assertions;
@@ -13,7 +13,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 
-public class StackOverflowContributorTest {
+public class StackOverflowProviderTest {
     private static WireMockServer server;
 
     @BeforeAll
@@ -45,8 +45,8 @@ public class StackOverflowContributorTest {
     @SneakyThrows
     @Test
     public void getInfoCorrect() {
-        StackOverflowInfoContributor contributor = new StackOverflowInfoContributor(server.baseUrl());
-        var info = contributor.getInfo(new URL("https://stackoverflow.com/questions/5769717/how-can-i-get-an-http-response-body-as-a-string"));
+        StackOverflowInfoProvider provider = new StackOverflowInfoProvider(server.baseUrl());
+        var info = provider.getInfo(new URL("https://stackoverflow.com/questions/5769717/how-can-i-get-an-http-response-body-as-a-string"));
         Assertions.assertThat(info)
             .extracting(Info::url, Info::title, Info::description)
             .contains(
@@ -59,24 +59,24 @@ public class StackOverflowContributorTest {
     @SneakyThrows
     @Test
     public void getInfoNotFound() {
-        StackOverflowInfoContributor contributor = new StackOverflowInfoContributor(server.baseUrl());
-        var info = contributor.getInfo(new URL("https://stackoverflow.com/questions/1"));
-        Assertions.assertThat(info).isNull();
+        StackOverflowInfoProvider provider = new StackOverflowInfoProvider(server.baseUrl());
+        var info = provider.getInfo(new URL("https://stackoverflow.com/questions/1"));
+        Assertions.assertThat(info).isEqualTo(new Info(null, null, null, null));
     }
 
     @SneakyThrows
     @Test
     public void isSupportedTrue() {
-        StackOverflowInfoContributor contributor = new StackOverflowInfoContributor(server.baseUrl());
-        var info = contributor.isSupported(new URL("https://stackoverflow.com/questions/5769717"));
+        StackOverflowInfoProvider provider = new StackOverflowInfoProvider(server.baseUrl());
+        var info = provider.isSupported(new URL("https://stackoverflow.com/questions/5769717"));
         Assertions.assertThat(info).isTrue();
     }
 
     @SneakyThrows
     @Test
     public void isSupportedFalse() {
-        StackOverflowInfoContributor contributor = new StackOverflowInfoContributor(server.baseUrl());
-        var info = contributor.isSupported(new URL("https://google.com/err/err"));
+        StackOverflowInfoProvider provider = new StackOverflowInfoProvider(server.baseUrl());
+        var info = provider.isSupported(new URL("https://google.com/err/err"));
         Assertions.assertThat(info).isFalse();
     }
 }

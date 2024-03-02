@@ -1,7 +1,7 @@
 package edu.java.configuration;
 
-import edu.java.contributor.sources.GithubInfoContributor;
-import edu.java.contributor.sources.StackOverflowInfoContributor;
+import edu.java.contributor.sources.GithubInfoProvider;
+import edu.java.contributor.sources.StackOverflowInfoProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -10,12 +10,12 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableScheduling
 public class ClientConfig {
     @Bean
-    public GithubInfoContributor githubInfoSupplier() {
-        return new GithubInfoContributor();
+    public GithubInfoProvider githubInfoSupplier() {
+        return new GithubInfoProvider();
     }
 
     @Bean
-    public StackOverflowInfoContributor stackOverflowInfoSupplier() {
-        return new StackOverflowInfoContributor();
+    public StackOverflowInfoProvider stackOverflowInfoSupplier() {
+        return new StackOverflowInfoProvider();
     }
 }

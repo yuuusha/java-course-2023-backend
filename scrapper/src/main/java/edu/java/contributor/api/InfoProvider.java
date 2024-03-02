@@ -2,7 +2,7 @@ package edu.java.contributor.api;
 
 import java.net.URL;
 
-public interface InfoContributor {
+public interface InfoProvider {
 
     boolean isSupported(URL url);
 
