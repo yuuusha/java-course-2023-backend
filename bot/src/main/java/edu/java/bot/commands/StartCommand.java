@@ -2,8 +2,8 @@ package edu.java.bot.commands;
 
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
-import edu.java.bot.managers.UsersLinksManager;
 import edu.java.bot.processors.TextProcessor;
+import edu.java.bot.service.BotService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -11,8 +11,8 @@ import org.springframework.stereotype.Component;
 public class StartCommand extends CommonCommand {
 
     @Autowired
-    public StartCommand(TextProcessor textProcessor, UsersLinksManager linksManager) {
-        super(textProcessor, linksManager);
+    public StartCommand(TextProcessor textProcessor, BotService botService) {
+        super(textProcessor, botService);
     }
 
     @Override
@@ -28,8 +28,7 @@ public class StartCommand extends CommonCommand {
     @Override
     public SendMessage handle(Update update) {
         Long chatId = update.message().chat().id();
-        String userName = update.message().chat().firstName();
-        linksManager.registerUser(userName, chatId);
+        botService.registerUser(chatId);
         return new SendMessage(chatId, textProcessor.process("command.start.message"));
     }
 }
