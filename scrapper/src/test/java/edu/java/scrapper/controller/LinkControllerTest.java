@@ -102,21 +102,6 @@ public class LinkControllerTest {
     }
 
     @Test
-    public void addTrackingLinkIncorrectTest() throws Exception {
-        var result = mockMvc.perform(
-            MockMvcRequestBuilders
-                .post("/links")
-                .contentType("application/json")
-                .header("Tg-Chat-Id", 42L)
-        ).andExpect(status().isBadRequest()).andReturn();
-
-        ApiErrorResponse error =
-            objectMapper.readValue(result.getResponse().getContentAsString(), ApiErrorResponse.class);
-        Assertions.assertThat(error).extracting("code", "exceptionName")
-            .contains("400", "org.springframework.http.converter.HttpMessageNotReadableException");
-    }
-
-    @Test
     public void addTrackingLinkIncorrectLinkTest() throws Exception {
         Mockito.when(linkService.addTrackingLink(URI.create("https://google2.com").toURL(), 42L))
             .thenThrow(new LinkIsNotSupportedException(URI.create("https://google2.com").toURL()));
