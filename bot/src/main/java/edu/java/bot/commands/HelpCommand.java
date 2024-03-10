@@ -2,8 +2,8 @@ package edu.java.bot.commands;
 
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
-import edu.java.bot.managers.UsersLinksManager;
 import edu.java.bot.processors.TextProcessor;
+import edu.java.bot.service.BotService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -11,8 +11,8 @@ import org.springframework.stereotype.Component;
 public class HelpCommand extends CommonCommand {
 
     @Autowired
-    public HelpCommand(TextProcessor textProcessor, UsersLinksManager linksManager) {
-        super(textProcessor, linksManager);
+    public HelpCommand(TextProcessor textProcessor, BotService botService) {
+        super(textProcessor, botService);
     }
 
     @Override

@@ -1,7 +1,7 @@
 package edu.java.configuration;
 
-import edu.java.contributor.sources.GithubInfoProvider;
-import edu.java.contributor.sources.StackOverflowInfoProvider;
+import edu.java.provider.sources.GithubInfoProvider;
+import edu.java.provider.sources.StackOverflowInfoProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
