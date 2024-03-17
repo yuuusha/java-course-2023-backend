@@ -1,7 +1,10 @@
 app:
   scheduler:
-    interval: 10s
-    delay: 10s
+    enable: true
+    interval: 20s
+    force-check-delay: 20s
+    max-links-per-check: 100
+  github-token: ${GITHUB_TOKEN}
 
 provider:
   github:
@@ -12,6 +15,12 @@ provider:
 spring:
   application:
     name: scrapper
+  liquibase:
+    enabled: false
+  datasource:
+    url: jdbc:postgresql://localhost:5432/scrapper
+    username: postgres
+    password: postgres
 
 server:
   port: 8080
