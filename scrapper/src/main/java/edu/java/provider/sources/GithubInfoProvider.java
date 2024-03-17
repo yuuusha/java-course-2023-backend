@@ -1,11 +1,14 @@
 package edu.java.provider.sources;
 
+import edu.java.configuration.ApplicationConfig;
 import edu.java.provider.api.Info;
 import edu.java.provider.api.WebClientInfoProvider;
 import edu.java.provider.sources.response.GithubInfoResponse;
 import java.net.URL;
 import java.util.regex.Pattern;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.web.reactive.function.client.WebClient;
 
 public class GithubInfoProvider extends WebClientInfoProvider {
 
@@ -19,6 +22,19 @@ public class GithubInfoProvider extends WebClientInfoProvider {
 
     public GithubInfoProvider() {
         super(GITHUB_API_LINK);
+    }
+
+    @Autowired
+    public GithubInfoProvider(ApplicationConfig applicationConfig) {
+        super(WebClient.builder()
+            .baseUrl(GITHUB_API_LINK)
+            .defaultHeaders(headers -> {
+                if (applicationConfig.githubToken() != null) {
+                    headers.set("Authorization", "Bearer " + applicationConfig.githubToken());
+                }
+            })
+            .build()
+        );
     }
 
     @Override
