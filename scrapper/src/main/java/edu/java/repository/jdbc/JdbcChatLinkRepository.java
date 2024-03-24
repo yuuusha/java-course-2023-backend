@@ -35,7 +35,7 @@ public class JdbcChatLinkRepository implements ChatLinkRepository {
     }
 
     public List<Chat> findAllChatByLinkUrl(URL url) {
-        Long linkId = client.sql("SELECT link_id FROM link WHERE url = ?")
+        Long linkId = client.sql("SELECT link_id FROM link where url = ?")
             .param(String.valueOf(url))
             .query(Long.class)
             .single();
@@ -75,5 +75,20 @@ public class JdbcChatLinkRepository implements ChatLinkRepository {
             .query(Long.class)
             .optional()
             .isPresent();
+    }
+
+    @Override
+    public boolean isExists(Long chatId, URL url) {
+        Long linkId = client.sql("SELECT link_id FROM link WHERE url = ?")
+            .param(url)
+            .query(Long.class)
+            .optional()
+            .orElse(null);
+
+        if (linkId == null) {
+            return false;
+        }
+
+        return isExists(chatId, linkId);
     }
 }

@@ -6,6 +6,7 @@ import edu.java.bot.dto.response.ApiErrorResponse;
 import edu.java.bot.service.LinkUpdatesSenderService;
 import java.net.URI;
 import java.util.List;
+import java.util.Map;
 import lombok.SneakyThrows;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -41,14 +42,15 @@ public class LinkUpdatesControllerTest {
                       "description": "string",
                       "tgChatIds": [
                         0
-                      ]
+                      ],
+                      "metaInfo": {}
                     }
                     """)
                 .contentType("application/json")
         ).andExpect(status().isOk());
 
         Mockito.verify(linkUpdatesSenderService).sendLinkUpdate(
-            new LinkUpdate(42L, URI.create("https://google.com").toURL(), "string", List.of(0L))
+            new LinkUpdate(42L, URI.create("https://google.com").toURL(), "string", List.of(0L), Map.of())
         );
     }
 

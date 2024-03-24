@@ -1,24 +1,48 @@
 command:
   start:
     description: "Запуск бота"
-    message: "Привет! Добавь ссылку, чтобы начать отслеживание"
-  track:
-    description: "Добавление ссылки для отслеживания"
-    success: "Ссылка успешно добавлена и отслеживается"
-    unsuccess: "Неверный формат ссылки"
-    exist: "Ссылка уже отслеживается"
-  untrack:
-    description: "Прекращение отслеживания ссылки"
-    success: "Отслеживание ссылки прекращено"
-    unsuccess: "Такая ссылка не отслеживается. Проверьте формат ввода"
-  list:
-    description: "Показать отслеживаемые ссылки"
-    empty: "Нет отслеживаемых ссылок"
-    get: "Отслеживаемые ссылки: %s"
+    messages:
+      success:
+        first_hello_message: "Привет! Добавь ссылку для отслеживания"
+        hello_message: "Привет снова!"
   help:
     description: "Показать доступные команды"
-    show: "Вот, что я могу: \n`/help` - Показать доступные команды\n`/start` - Запуск бота\n`/track` - Добавление ссылки для отслеживания\n`/untrack` - Прекращение отслеживания ссылки\n`/list` - Показать отслеживаемые ссылки"
+    util:
+      title: "Вот, что я могу:\n"
+      help_command_format: "`%command%` - %description%\n"
+  track:
+    description: "Добавить ссылку для отслеживания"
+    messages:
+      successful_track: "Ссылка %link% теперь отслеживается"
+      errors:
+        invalid_command_usage: "Неизвестная команда"
+        invalid_argument: "Неверный формат ссылки"
+        error_add: "Ошибка при добавлении ссылки %link%: %error_message%"
+        already_tracked: "Ссылка %link% уже отслеживается"
+  untrack:
+    description: "Прекратить отслеживать ссылку"
+    messages:
+      successful_untrack: "Ссылка %link% теперь не отслеживается"
+      errors:
+        not_tracked: "Ссылка %link% не отслеживалась"
+        error_untrack: "Ошибка при удалении ссылки %link%: %error_message%"
+  list:
+    description: "Показать отслеживаемые ссылки"
+    messages:
+      show_tracked_links: "Отслеживаемые ссылки:\n"
+      empty_list_of_links: "Нет отслеживаемых ссылок"
 message:
   unknown_command: "Неизвестная команда"
+  invalid_argument: "Неизвестный параметр `%argument%`."
+  empty_argument: "Пустой ввод"
 link:
-  update: "Новое обновление"
+  update: "Ссылка %link% - %description% обновлена"
+github:
+  push_event: "Добавлено %size% коммитов"
+  issue_comment_event: "Новое сообщение в %title%"
+  issues_event: "Обновление в %title%"
+  pull_request_event: "Обновление в %title%"
+  create_event: "Создано %ref% (%ref_type%)"
+stackoverflow:
+  answers_event: "Новые ответы на вопрос. На вопрос ответили %count% раз"
+  score_event: "Рейтинг вопроса изменен: %score%"

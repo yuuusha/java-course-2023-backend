@@ -5,6 +5,7 @@ import java.net.URL;
 import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Optional;
 
 public interface LinkRepository {
     List<Link> findAll();
@@ -13,11 +14,13 @@ public interface LinkRepository {
 
     Long remove(long linkId);
 
-    Link findById(long linkId);
+    Optional<Link> findById(long linkId);
 
-    Link findByUrl(URL url);
+    Optional<Link> findByUrl(URL url);
 
     List<Link> findLinksCheckedAfter(Duration afterDuration, int limit);
 
-    void update(long linkId, OffsetDateTime lastUpdate);
+    void update(long linkId, OffsetDateTime lastUpdate, String metaInfo);
+
+    void checkNow(long id);
 }

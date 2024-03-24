@@ -19,7 +19,9 @@ public interface LinkService {
 
     List<Link> getOldLinks(Duration afterDuration, int limit);
 
-    void update(Long id, OffsetDateTime lastUpdate);
+    void update(Long id, OffsetDateTime lastUpdate, String metaInfo);
 
     ListChatsResponse getLinkSubscribers(URL url);
+
+    void checkNow(Long aLong);
 }

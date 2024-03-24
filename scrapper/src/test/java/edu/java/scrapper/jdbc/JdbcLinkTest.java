@@ -7,6 +7,7 @@ import edu.java.util.URLCreator;
 import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Optional;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,8 +26,8 @@ public class JdbcLinkTest extends IntegrationEnvironment {
 
     @BeforeEach
     void setUp() {
-        link = new Link(0L, URLCreator.createURL("https://google.com"), OffsetDateTime.MIN, OffsetDateTime.MAX);
-        link2 = new Link(0L, URLCreator.createURL("https://tinkoff.ru"), OffsetDateTime.MIN, OffsetDateTime.MAX);
+        link = new Link(0L, URLCreator.createURL("https://google.com"), OffsetDateTime.MIN, OffsetDateTime.MAX, "");
+        link2 = new Link(0L, URLCreator.createURL("https://tinkoff.ru"), OffsetDateTime.MIN, OffsetDateTime.MAX, "");
     }
 
     @Test
@@ -34,8 +35,8 @@ public class JdbcLinkTest extends IntegrationEnvironment {
     @Rollback
     void addLinkTest() {
         Long id = jdbcLinkRepository.add(link);
-        Link linkFromDatabase = jdbcLinkRepository.findById(id);
-        Assertions.assertThat(linkFromDatabase.url()).isEqualTo(link.url());
+        Optional<Link> linkFromDatabase = jdbcLinkRepository.findById(id);
+        Assertions.assertThat(linkFromDatabase.get().url()).isEqualTo(link.url());
     }
 
     @Test
@@ -43,10 +44,10 @@ public class JdbcLinkTest extends IntegrationEnvironment {
     @Rollback
     void removeLinkTest() {
         jdbcLinkRepository.add(link);
-        Link linkFromDatabase = jdbcLinkRepository.findByUrl(link.url());
-        jdbcLinkRepository.remove(linkFromDatabase.linkId());
-        Link actualResult = jdbcLinkRepository.findByUrl(link.url());
-        Assertions.assertThat(actualResult).isNull();
+        Optional<Link> linkFromDatabase = jdbcLinkRepository.findByUrl(link.url());
+        jdbcLinkRepository.remove(linkFromDatabase.get().linkId());
+        Optional<Link> actualResult = jdbcLinkRepository.findByUrl(link.url());
+        Assertions.assertThat(actualResult).isEmpty();
     }
 
     @Test
@@ -63,12 +64,13 @@ public class JdbcLinkTest extends IntegrationEnvironment {
     @Transactional
     @Rollback
     void oldLinksTest() {
-        link = new Link(0L, URLCreator.createURL("https://google.com"), OffsetDateTime.MIN, OffsetDateTime.now());
+        link = new Link(0L, URLCreator.createURL("https://google.com"), OffsetDateTime.MIN, OffsetDateTime.now(), "");
         link2 = new Link(
             0L,
             URLCreator.createURL("https://tinkoff.ru"),
             OffsetDateTime.MIN,
-            OffsetDateTime.now().minus(Duration.ofMinutes(60))
+            OffsetDateTime.now().minus(Duration.ofMinutes(60)),
+            ""
         );
         jdbcLinkRepository.add(link);
         jdbcLinkRepository.add(link2);
