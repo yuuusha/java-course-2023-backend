@@ -6,10 +6,12 @@ import edu.java.repository.ChatLinkRepository;
 import java.net.URL;
 import java.util.List;
 import org.jooq.DSLContext;
+import org.springframework.stereotype.Repository;
 import static edu.java.domain.jooq.Tables.CHAT;
 import static edu.java.domain.jooq.Tables.CHAT_LINK;
 import static edu.java.domain.jooq.Tables.LINK;
 
+@Repository
 public class JooqChatLinkRepository implements ChatLinkRepository {
 
     private final DSLContext dslContext;

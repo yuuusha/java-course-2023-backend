@@ -8,13 +8,11 @@ import edu.java.bot.dto.response.ApiErrorResponse;
 import edu.java.bot.processors.TextProcessor;
 import edu.java.bot.service.BotService;
 import edu.java.bot.service.URLService;
+import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-
-import java.util.Map;
-
 import static edu.java.bot.Utils.createMockUpdate;
 import static org.junit.Assert.assertEquals;
 

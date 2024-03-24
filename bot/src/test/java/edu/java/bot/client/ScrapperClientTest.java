@@ -6,6 +6,7 @@ import edu.java.bot.client.scrapper.ScrapperClient;
 import edu.java.bot.client.scrapper.dto.request.AddLinkRequest;
 import edu.java.bot.client.scrapper.dto.request.RemoveLinkRequest;
 import edu.java.bot.client.scrapper.dto.response.LinkResponse;
+import java.net.URI;
 import lombok.SneakyThrows;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -14,10 +15,12 @@ import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.support.WebClientAdapter;
 import org.springframework.web.service.invoker.HttpServiceProxyFactory;
 import reactor.core.publisher.Mono;
-
-import java.net.URI;
-
-import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.delete;
+import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.post;
+import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 
 @WireMockTest(httpPort = 8081)
 public class ScrapperClientTest {

@@ -2,20 +2,17 @@ package edu.java.bot.commands;
 
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
-import com.pengrad.telegrambot.request.SetMyDescription;
 import edu.java.bot.client.scrapper.dto.response.LinkResponse;
 import edu.java.bot.dto.OptionalAnswer;
 import edu.java.bot.dto.response.ApiErrorResponse;
 import edu.java.bot.processors.TextProcessor;
 import edu.java.bot.service.BotService;
 import edu.java.bot.service.URLService;
+import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-
-import java.util.Map;
-
 import static edu.java.bot.Utils.createMockUpdate;
 import static org.junit.Assert.assertEquals;
 

@@ -23,5 +23,5 @@ public interface LinkService {
 
     ListChatsResponse getLinkSubscribers(URL url);
 
-    void checkNow(Long aLong);
+    void checkNow(Long linkId);
 }

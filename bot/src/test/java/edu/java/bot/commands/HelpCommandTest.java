@@ -4,12 +4,10 @@ import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
 import edu.java.bot.processors.TextProcessor;
 import edu.java.bot.service.BotService;
+import java.util.Collections;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-
-import java.util.Collections;
-
 import static edu.java.bot.Utils.createMockUpdate;
 import static org.junit.Assert.assertEquals;
 

@@ -2,12 +2,9 @@ package edu.java.scrapper.supplier.stackoverflow;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.WireMockServer;
-import edu.java.configuration.supplier.GithubConfig;
-import edu.java.configuration.supplier.GithubPatternConfig;
 import edu.java.configuration.supplier.StackOverflowConfig;
 import edu.java.configuration.supplier.StackOverflowPatternConfig;
 import edu.java.supplier.api.LinkInfo;
-import edu.java.supplier.github.GithubInfoSupplier;
 import edu.java.supplier.stackoverflow.StackOverflowInfoSupplier;
 import java.net.URI;
 import lombok.SneakyThrows;

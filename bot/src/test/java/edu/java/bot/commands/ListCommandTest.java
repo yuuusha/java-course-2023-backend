@@ -7,15 +7,13 @@ import edu.java.bot.client.scrapper.dto.response.ListLinksResponse;
 import edu.java.bot.dto.OptionalAnswer;
 import edu.java.bot.processors.TextProcessor;
 import edu.java.bot.service.BotService;
+import java.net.URI;
+import java.util.List;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-
-import java.net.URI;
-import java.util.List;
-
 import static edu.java.bot.Utils.createMockUpdate;
 import static org.junit.Assert.assertEquals;
 
