@@ -7,6 +7,7 @@ import edu.java.bot.client.scrapper.dto.response.LinkResponse;
 import edu.java.bot.client.scrapper.dto.response.ListLinksResponse;
 import java.net.URL;
 import java.util.List;
+import edu.java.bot.dto.OptionalAnswer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -39,11 +40,11 @@ public class DefaultBotServiceTest {
     @Test
     void addTrackingLinkTest() {
         AddLinkRequest expectedRequest = new AddLinkRequest(url);
-        LinkResponse expectedResponse = new LinkResponse(chatId, url);
+        OptionalAnswer<LinkResponse> expectedResponse = new OptionalAnswer<>(new LinkResponse(chatId, url), null);
 
         when(scrapperClient.addTrackingLink(chatId, expectedRequest)).thenReturn(expectedResponse);
 
-        LinkResponse actualResponse = botService.addLink(chatId, String.valueOf(url));
+        OptionalAnswer<LinkResponse> actualResponse = botService.trackUserLink(chatId, String.valueOf(url));
 
         assertEquals(expectedResponse, actualResponse);
         verify(scrapperClient, times(1)).addTrackingLink(chatId, expectedRequest);
@@ -52,11 +53,11 @@ public class DefaultBotServiceTest {
     @Test
     void deleteTrackingLinkTest() {
         RemoveLinkRequest expectedRequest = new RemoveLinkRequest(url);
-        LinkResponse expectedResponse = new LinkResponse(chatId, url);
+        OptionalAnswer<LinkResponse> expectedResponse = new OptionalAnswer<>(new LinkResponse(chatId, url), null);
 
         when(scrapperClient.deleteTrackingLink(chatId, expectedRequest)).thenReturn(expectedResponse);
 
-        LinkResponse actualResponse = botService.removeLink(chatId, String.valueOf(url));
+        OptionalAnswer<LinkResponse> actualResponse = botService.unTrackUserLink(chatId, String.valueOf(url));
 
         assertEquals(expectedResponse, actualResponse);
         verify(scrapperClient, times(1)).deleteTrackingLink(chatId, expectedRequest);
@@ -64,11 +65,12 @@ public class DefaultBotServiceTest {
 
     @Test
     void getTrackedLinksTest() {
-        ListLinksResponse expectedResponse = new ListLinksResponse(List.of());
+        OptionalAnswer<ListLinksResponse> expectedResponse =
+            new OptionalAnswer<>(new ListLinksResponse(List.of()), null);
 
         when(scrapperClient.getTrackedLinks(chatId)).thenReturn(expectedResponse);
 
-        ListLinksResponse actualResponse = botService.getListLinks(chatId);
+        OptionalAnswer<ListLinksResponse> actualResponse = botService.userLinks(chatId);
 
         assertEquals(expectedResponse, actualResponse);
         verify(scrapperClient, times(1)).getTrackedLinks(chatId);

@@ -6,11 +6,15 @@ app:
     max-links-per-check: 100
   github-token: ${GITHUB_TOKEN}
 
-provider:
+supplier:
   github:
-    url: https://api.github.com
+    url: "https://api.github.com/"
+    patterns:
+      repository: "https://github.com/(.+)/(.+)"
   stackoverflow:
-    url: https://api.stackexchange.com/2.3
+    url: "https://api.stackexchange.com/2.3"
+    patterns:
+      questions: "https://stackoverflow.com/questions/(\\d+).*"
 
 spring:
   application:

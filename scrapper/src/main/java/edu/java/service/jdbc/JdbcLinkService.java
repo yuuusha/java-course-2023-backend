@@ -7,16 +7,17 @@ import edu.java.dto.response.ListChatsResponse;
 import edu.java.dto.response.ListLinksResponse;
 import edu.java.exception.LinkIsNotSupportedException;
 import edu.java.exception.LinkNotFoundException;
-import edu.java.provider.InfoProviders;
-import edu.java.provider.api.Info;
-import edu.java.provider.api.InfoProvider;
 import edu.java.repository.ChatLinkRepository;
 import edu.java.repository.LinkRepository;
 import edu.java.service.LinkService;
+import edu.java.supplier.InfoSuppliers;
+import edu.java.supplier.api.InfoSupplier;
+import edu.java.supplier.api.LinkInfo;
 import java.net.URL;
 import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,7 +30,7 @@ public class JdbcLinkService implements LinkService {
 
     private final LinkRepository linkRepository;
 
-    private final InfoProviders infoProviders;
+    private final InfoSuppliers infoSuppliers;
 
     @Override
     @Transactional
@@ -45,21 +46,31 @@ public class JdbcLinkService implements LinkService {
     public LinkResponse addTrackingLink(URL link, Long tgChatId) {
         String host = link.getHost();
         String domain = host.replaceAll("^(www\\.)?|\\.com$", "");
-        InfoProvider infoProvider = infoProviders.getSupplierByTypeHost(domain);
-        if (infoProvider == null || !infoProvider.isSupported(link)) {
+        InfoSupplier infoSupplier = infoSuppliers.getSupplierByTypeHost(domain);
+        if (infoSupplier == null || !infoSupplier.isSupported(link)) {
             throw new LinkIsNotSupportedException(link);
         }
 
-        Info linkInfo = infoProvider.getInfo(link);
+        LinkInfo linkInfo = infoSupplier.fetchInfo(link);
         if (linkInfo == null) {
             throw new LinkIsNotSupportedException(link);
         }
 
         Long linkId;
-        if (linkInfo.lastModified() == null) {
-            linkId = linkRepository.add(new Link(1L, linkInfo.url(), OffsetDateTime.now(), OffsetDateTime.now()));
+        if (linkInfo.events().isEmpty()) {
+            linkId = linkRepository.add(new Link(1L,
+                linkInfo.url(),
+                OffsetDateTime.now(),
+                OffsetDateTime.now(),
+                linkInfo.metaInfo()
+            ));
         } else {
-            linkId = linkRepository.add(new Link(1L, linkInfo.url(), linkInfo.lastModified(), OffsetDateTime.now()));
+            linkId = linkRepository.add(new Link(1L,
+                linkInfo.url(),
+                linkInfo.events().getFirst().lastUpdate(),
+                OffsetDateTime.now(),
+                linkInfo.metaInfo()
+            ));
         }
         chatLinkRepository.add(tgChatId, linkId);
         return new LinkResponse(linkId, link);
@@ -68,13 +79,14 @@ public class JdbcLinkService implements LinkService {
     @Override
     @Transactional
     public LinkResponse deleteTrackingLink(URL url, Long tgChatId) {
-        Link link = linkRepository.findByUrl(url);
-        if (link != null) {
-            chatLinkRepository.remove(tgChatId, link.linkId());
-            if (chatLinkRepository.findAllChatByLinkId(link.linkId()).isEmpty()) {
-                linkRepository.remove(link.linkId());
+        Optional<Link> link = linkRepository.findByUrl(url);
+        if (link.isPresent()) {
+            long linkId = link.get().linkId();
+            chatLinkRepository.remove(tgChatId, linkId);
+            if (chatLinkRepository.findAllChatByLinkId(linkId).isEmpty()) {
+                linkRepository.remove(linkId);
             }
-            return new LinkResponse(link.linkId(), url);
+            return new LinkResponse(linkId, url);
         } else {
             throw new LinkNotFoundException(url);
         }
@@ -88,11 +100,11 @@ public class JdbcLinkService implements LinkService {
 
     @Override
     @Transactional
-    public void update(Long id, OffsetDateTime lastUpdate) {
+    public void update(Long id, OffsetDateTime lastUpdate, String metaInfo) {
         if (linkRepository.findById(id) == null) {
             throw new LinkNotFoundException(id);
         }
-        linkRepository.update(id, lastUpdate);
+        linkRepository.update(id, lastUpdate, metaInfo);
     }
 
     @Override
@@ -100,5 +112,10 @@ public class JdbcLinkService implements LinkService {
     public ListChatsResponse getLinkSubscribers(URL url) {
         List<Chat> chats = chatLinkRepository.findAllChatByLinkUrl(url);
         return new ListChatsResponse(chats, chats.size());
+    }
+
+    @Override
+    public void checkNow(Long id) {
+        linkRepository.checkNow(id);
     }
 }

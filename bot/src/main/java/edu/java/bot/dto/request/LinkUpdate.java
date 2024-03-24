@@ -7,11 +7,15 @@ import java.util.Map;
 import org.jetbrains.annotations.NotNull;
 
 public record LinkUpdate(
+
     @NotNull Long id,
+
     @NotNull URL url,
+
     @NotEmpty String description,
+
     @NotEmpty List<Long> tgChatIds,
 
-    @NotEmpty Map<String, String> metaInfo
+    Map<String, String> metaInfo
 ) {
 }

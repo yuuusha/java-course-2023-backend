@@ -4,10 +4,11 @@ import edu.java.client.bot.BotClient;
 import edu.java.client.bot.dto.request.LinkUpdate;
 import edu.java.configuration.ApplicationConfig;
 import edu.java.dto.Chat;
-import edu.java.provider.InfoProviders;
-import edu.java.provider.api.Info;
-import edu.java.provider.api.InfoProvider;
 import edu.java.service.LinkService;
+import edu.java.supplier.InfoSuppliers;
+import edu.java.supplier.api.InfoSupplier;
+import edu.java.supplier.api.LinkInfo;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -22,7 +23,7 @@ public class LinkUpdaterScheduler {
 
     private final ApplicationConfig applicationConfig;
 
-    private final InfoProviders infoProviders;
+    private final InfoSuppliers infoSuppliers;
 
     private final BotClient botClient;
 
@@ -37,19 +38,27 @@ public class LinkUpdaterScheduler {
                 log.info("Updating link {}", link);
                 String host = link.url().getHost();
                 String domain = host.replaceAll("^(www\\.)?|\\.com$", "");
-                InfoProvider provider = infoProviders.getSupplierByTypeHost(domain);
-                Info linkInfo = provider.getInfo(link.url());
+                InfoSupplier supplier = infoSuppliers.getSupplierByTypeHost(domain);
+                LinkInfo linkInfo = supplier.fetchInfo(link.url());
+                if (linkInfo != null) {
+                    linkInfo = supplier.filterByDateTime(linkInfo, link.lastUpdate(), link.metaInfo());
 
-                if (linkInfo.lastModified().isAfter(link.lastUpdate())) {
-                    linkService.update(link.linkId(), link.lastUpdate());
-                    botClient.handleUpdate(new LinkUpdate(
-                        link.linkId(),
-                        link.url(),
-                        linkInfo.title(),
-                        linkService.getLinkSubscribers(link.url()).chats().stream()
-                            .map(Chat::chatId)
-                            .toList()
-                    ));
+                    if (linkInfo.events().isEmpty()) {
+                        linkService.checkNow(link.linkId());
+                        return;
+                    }
+                    linkService.update(link.linkId(), linkInfo.events().getFirst().lastUpdate(), linkInfo.metaInfo());
+                    List<Long> subscribers = linkService.getLinkSubscribers(link.url()).chats().stream()
+                        .map(Chat::chatId)
+                        .toList();
+                    linkInfo.events().reversed().forEach(
+                        event -> botClient.handleUpdate(new LinkUpdate(
+                            link.linkId(),
+                            link.url(),
+                            event.typeEvent(),
+                            subscribers,
+                            event.eventData()
+                        )));
                 }
             });
         log.info("Updating links ends");
