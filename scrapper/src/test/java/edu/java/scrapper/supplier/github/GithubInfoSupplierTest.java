@@ -1,11 +1,16 @@
 package edu.java.scrapper.supplier.github;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
+import edu.java.RetryElement;
+import edu.java.RetryQueryConfiguration;
+import edu.java.configuration.ApplicationConfig;
 import edu.java.configuration.supplier.GithubConfig;
 import edu.java.configuration.supplier.GithubPatternConfig;
 import edu.java.supplier.api.LinkInfo;
 import edu.java.supplier.github.GithubInfoSupplier;
 import java.net.URI;
+import java.time.Duration;
+import java.util.List;
 import lombok.SneakyThrows;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -19,6 +24,25 @@ import static edu.java.scrapper.util.Utils.readAll;
 
 public class GithubInfoSupplierTest {
     private static WireMockServer server;
+
+    private static final ApplicationConfig NULL_APPLICATION_CONFIG = new ApplicationConfig(
+        null,
+        null,
+        null
+    );
+
+    private static final RetryQueryConfiguration RETRY_QUERY_CONFIGURATION = new RetryQueryConfiguration(
+        List.of(new RetryElement(
+                "github",
+                "fixed",
+                1,
+                1,
+                Duration.ofSeconds(1),
+                null,
+                List.of(429)
+            )
+        )
+    );
 
     @BeforeAll
     public static void setUp() {
@@ -42,7 +66,7 @@ public class GithubInfoSupplierTest {
         GithubConfig config = new GithubConfig(server.baseUrl(), githubPatternConfig);
 
 
-        GithubInfoSupplier supplier = new GithubInfoSupplier(config);
+        GithubInfoSupplier supplier = new GithubInfoSupplier(config, NULL_APPLICATION_CONFIG, RETRY_QUERY_CONFIGURATION);
         LinkInfo info = supplier.fetchInfo(
             new URI("https://github.com/yuuusha/java-course-2023-backend").toURL()
         );
@@ -62,7 +86,7 @@ public class GithubInfoSupplierTest {
         GithubConfig config = new GithubConfig(server.baseUrl(), githubPatternConfig);
 
 
-        GithubInfoSupplier supplier = new GithubInfoSupplier(config);
+        GithubInfoSupplier supplier = new GithubInfoSupplier(config, NULL_APPLICATION_CONFIG, RETRY_QUERY_CONFIGURATION);
         LinkInfo info = supplier.fetchInfo(
             new URI("https://github.com/yuuusha/java-course-2023-backend").toURL()
         );
@@ -77,7 +101,7 @@ public class GithubInfoSupplierTest {
         GithubConfig config = new GithubConfig(server.baseUrl(), githubPatternConfig);
 
 
-        GithubInfoSupplier supplier = new GithubInfoSupplier(config);
+        GithubInfoSupplier supplier = new GithubInfoSupplier(config, NULL_APPLICATION_CONFIG, RETRY_QUERY_CONFIGURATION);
         LinkInfo info = supplier.fetchInfo(
             new URI("https://github.com/yuuusha/test/test").toURL()
         );

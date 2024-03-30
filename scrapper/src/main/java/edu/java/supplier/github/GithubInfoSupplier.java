@@ -1,5 +1,7 @@
 package edu.java.supplier.github;
 
+import edu.java.RetryFactory;
+import edu.java.RetryQueryConfiguration;
 import edu.java.configuration.ApplicationConfig;
 import edu.java.configuration.supplier.GithubConfig;
 import edu.java.supplier.api.LinkInfo;
@@ -29,7 +31,11 @@ public class GithubInfoSupplier extends WebClientInfoSupplier {
     private final Pattern repositoryPattern;
 
     @Autowired
-    public GithubInfoSupplier(GithubConfig githubConfig, ApplicationConfig applicationConfig) {
+    public GithubInfoSupplier(
+        GithubConfig githubConfig,
+        ApplicationConfig applicationConfig,
+        RetryQueryConfiguration retryQueryConfiguration
+    ) {
         super(WebClient.builder()
             .baseUrl(githubConfig.url())
             .defaultHeaders(headers -> {
@@ -37,18 +43,11 @@ public class GithubInfoSupplier extends WebClientInfoSupplier {
                     headers.set("Authorization", "Bearer " + applicationConfig.githubToken());
                 }
             })
+            .filter(RetryFactory.createFilter(RetryFactory.createRetry(retryQueryConfiguration, TYPE_SUPPLIER)))
             .build()
         );
         repositoryPattern = Pattern.compile(githubConfig.patterns().repository());
         eventResolver = new GithubEventResolver();
-    }
-
-    public GithubInfoSupplier(
-        GithubConfig githubConfig
-    ) {
-        super(githubConfig.url());
-        this.eventResolver = new GithubEventResolver();
-        repositoryPattern = Pattern.compile(githubConfig.patterns().repository());
     }
 
     public String getTypeSupplier() {

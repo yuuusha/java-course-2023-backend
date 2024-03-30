@@ -1,4 +1,4 @@
-package edu.java.scrapper.jdbc;
+package edu.java.scrapper.repository.jdbc;
 
 import edu.java.dto.Chat;
 import edu.java.dto.Link;
