@@ -5,7 +5,7 @@ app:
     force-check-delay: 20s
     max-links-per-check: 100
   github-token: ${GITHUB_TOKEN}
-  database-access-type: jdbc
+  database-access-type: jpa
 
 supplier:
   github:
@@ -30,6 +30,13 @@ spring:
     hibernate:
       ddl-auto: validate
     open-in-view: false
+  cache:
+    jcache:
+      provider: com.github.benmanes.caffeine.jcache.spi.CaffeineCachingProvider
+    caffeine:
+      spec: maximumSize=100000,expireAfterAccess=3600s
+    cache-names:
+      - rate-limit-bucket
 
 server:
   port: 8080
@@ -43,3 +50,38 @@ springdoc:
 
 bot:
   url: http://localhost:8090
+
+retry-query:
+  retries:
+    - target: github
+      type: exponential
+      max-attempts: 3
+      min-delay: 1s
+      max-delay: 10s
+      codes: 429
+    - target: stackoverflow
+      type: exponential
+      max-attempts: 3
+      min-delay: 1s
+      max-delay: 10s
+      codes: 429
+    - target: bot
+      type: exponential
+      max-attempts: 3
+      min-delay: 1s
+      max-delay: 10s
+      codes: 429
+
+bucket4j:
+  enabled: true
+  filters:
+    - cache-name: rate-limit-bucket
+      url: .*
+      http-status-code: too_many_requests
+      rate-limits:
+        - bandwidths:
+            - capacity: 1000
+              time: 1
+              unit: hours
+              refill-speed: interval
+          cache-key: getRemoteAddr()

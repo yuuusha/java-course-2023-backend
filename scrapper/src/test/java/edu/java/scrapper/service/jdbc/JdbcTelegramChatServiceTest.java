@@ -1,4 +1,4 @@
-package edu.java.scrapper.service;
+package edu.java.scrapper.service.jdbc;
 
 import edu.java.exception.ChatAlreadyRegisteredException;
 import edu.java.exception.ChatNotFoundException;
@@ -10,6 +10,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
@@ -17,6 +19,7 @@ public class JdbcTelegramChatServiceTest extends IntegrationEnvironment {
 
     @Autowired
     private TelegramChatService chatService;
+
     @Autowired
     private JdbcChatRepository chatRepository;
 
@@ -52,5 +55,10 @@ public class JdbcTelegramChatServiceTest extends IntegrationEnvironment {
     void deleteChatNotFoundTest() {
         Assertions.assertThatThrownBy(() -> chatService.deleteChat(41L))
             .isInstanceOf(ChatNotFoundException.class);
+    }
+
+    @DynamicPropertySource
+    static void jdbcProperties(DynamicPropertyRegistry registry) {
+        registry.add("app.database-access-type", () -> "jdbc");
     }
 }

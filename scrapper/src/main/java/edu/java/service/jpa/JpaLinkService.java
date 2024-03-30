@@ -76,6 +76,7 @@ public class JpaLinkService implements LinkService {
             linkEntity.setLastUpdate(lastUpdate);
             linkEntity.setLastCheck(OffsetDateTime.now());
             linkEntity.setMetaInfo(linkInfo.metaInfo());
+            linkRepository.save(linkEntity);
             chat.addLink(linkEntity);
             return new LinkResponse(linkEntity.getId(), link);
         }
@@ -85,6 +86,7 @@ public class JpaLinkService implements LinkService {
             OffsetDateTime.now(),
             linkInfo.metaInfo()
         );
+        linkRepository.save(linkEntity);
         chat.addLink(linkEntity);
         return new LinkResponse(linkEntity.getId(), link);
     }
