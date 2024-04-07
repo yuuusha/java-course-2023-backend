@@ -2,7 +2,6 @@ package edu.java.scrapper.supplier.stackoverflow;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.WireMockServer;
-import edu.java.RetryElement;
 import edu.java.RetryQueryConfiguration;
 import edu.java.configuration.supplier.StackOverflowConfig;
 import edu.java.configuration.supplier.StackOverflowPatternConfig;
@@ -25,7 +24,7 @@ public class StackOverflowInfoSupplierTest {
     private static WireMockServer server;
 
     private static final RetryQueryConfiguration RETRY_QUERY_CONFIGURATION = new RetryQueryConfiguration(
-        List.of(new RetryElement(
+        List.of(new RetryQueryConfiguration.RetryElement(
                 "stackoverflow",
                 "fixed",
                 1,

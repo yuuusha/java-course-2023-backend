@@ -14,7 +14,8 @@ import reactor.util.retry.Retry;
 @UtilityClass
 public class RetryFactory {
 
-    private static final Map<String, Function<RetryElement, Retry>> RETRY_BUILDERS = new HashMap<>();
+    private static final Map<String, Function<RetryQueryConfiguration.RetryElement, Retry>> RETRY_BUILDERS =
+        new HashMap<>();
 
     static {
         RETRY_BUILDERS.put("fixed", new FixedRetryBuilder());
@@ -36,6 +37,6 @@ public class RetryFactory {
     public static Retry createRetry(RetryQueryConfiguration config, String target) {
         return config.retries().stream().filter(element -> element.target().equals(target)).findFirst()
             .map(element -> RETRY_BUILDERS.get(element.type()).apply(element))
-            .orElseThrow(() -> new RuntimeException("Unknown target " + target));
+            .orElseThrow(() -> new IllegalStateException("Unknown target " + target));
     }
 }

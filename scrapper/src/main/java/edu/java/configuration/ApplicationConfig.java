@@ -16,7 +16,9 @@ import org.springframework.validation.annotation.Validated;
 public record ApplicationConfig(
     @NotNull Scheduler scheduler,
     String githubToken,
-    AccessType databaseAccessType
+    AccessType databaseAccessType,
+    KafkaConfigurationInfo kafkaConfigurationInfo,
+    boolean useQueue
 ) {
     public record Scheduler(@NotNull boolean enable, @NotNull Duration interval, @NotNull Duration forceCheckDelay,
                             int maxLinksPerCheck) {
@@ -26,5 +28,8 @@ public record ApplicationConfig(
         JDBC,
         JPA,
         JOOQ
+    }
+
+    public record KafkaConfigurationInfo(String topicName) {
     }
 }

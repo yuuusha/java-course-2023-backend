@@ -1,7 +1,6 @@
 package edu.java.scrapper.supplier.github;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
-import edu.java.RetryElement;
 import edu.java.RetryQueryConfiguration;
 import edu.java.configuration.ApplicationConfig;
 import edu.java.configuration.supplier.GithubConfig;
@@ -28,11 +27,13 @@ public class GithubInfoSupplierTest {
     private static final ApplicationConfig NULL_APPLICATION_CONFIG = new ApplicationConfig(
         null,
         null,
-        null
+        null,
+        null,
+        false
     );
 
     private static final RetryQueryConfiguration RETRY_QUERY_CONFIGURATION = new RetryQueryConfiguration(
-        List.of(new RetryElement(
+        List.of(new RetryQueryConfiguration.RetryElement(
                 "github",
                 "fixed",
                 1,
