@@ -80,7 +80,7 @@ public class LinkControllerTest {
         ApiErrorResponse error =
             objectMapper.readValue(result.getResponse().getContentAsString(), ApiErrorResponse.class);
         Assertions.assertThat(error).extracting("code", "exceptionName")
-            .contains("400", "org.springframework.web.bind.MissingRequestHeaderException");
+            .contains("400", "MissingRequestHeaderException");
     }
 
     @Test

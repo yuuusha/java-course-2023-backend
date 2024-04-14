@@ -65,24 +65,24 @@ bot:
   url: http://localhost:8090
 
 retry-query:
-  retries:
-    - target: github
+  targets:
+    github:
       type: exponential
       max-attempts: 5
       min-delay: 1s
       max-delay: 10s
-      codes: 500
-    - target: stackoverflow
+      codes: 429
+    stackoverflow:
       type: fixed
       max-attempts: 5
       min-delay: 1s
       max-delay: 10s
-      codes: 500
-    - target: bot
+      codes: 429
+    bot:
       type: linear
       max-attempts: 5
       min-delay: 5s
-      codes: 500
+      codes: 429
 
 bucket4j:
   enabled: true
@@ -101,3 +101,17 @@ bucket4j:
 
 rate-limiter:
   whitelist: ${WHITELISTED_IPS:localhost}
+
+management:
+  metrics:
+    tags:
+      application: ${spring.application.name}
+  server:
+    port: 8000
+  endpoints:
+    web:
+      exposure:
+        include: health, info, prometheus
+      path-mapping:
+        prometheus: /metrics
+      base-path: '/'

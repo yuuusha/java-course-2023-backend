@@ -1,6 +1,7 @@
 package edu.java;
 
 import edu.java.configuration.ApplicationConfig;
+import edu.java.configuration.RetryQueryConfiguration;
 import edu.java.configuration.supplier.GithubConfig;
 import edu.java.configuration.supplier.StackOverflowConfig;
 import org.springframework.boot.SpringApplication;

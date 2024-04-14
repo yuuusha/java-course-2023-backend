@@ -1,10 +1,10 @@
 package edu.java.supplier.api;
 
-import edu.java.RetryFactory;
+import edu.java.configuration.RetryQueryConfiguration;
+import edu.java.util.retry.RetryFactory;
 import java.time.OffsetDateTime;
 import org.springframework.http.MediaType;
 import org.springframework.web.reactive.function.client.WebClient;
-import reactor.util.retry.Retry;
 
 public abstract class WebClientInfoSupplier implements InfoSupplier {
     private final WebClient webClient;
@@ -17,10 +17,10 @@ public abstract class WebClientInfoSupplier implements InfoSupplier {
         this.webClient = webClient;
     }
 
-    public WebClientInfoSupplier(String baseUrl, Retry retry) {
+    public WebClientInfoSupplier(String baseUrl, RetryQueryConfiguration retryQueryConfiguration, String target) {
         this(WebClient.builder()
             .baseUrl(baseUrl)
-            .filter(RetryFactory.createFilter(retry))
+            .filter(RetryFactory.createFilter(retryQueryConfiguration, target))
             .build()
         );
     }

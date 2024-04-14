@@ -1,8 +1,9 @@
-package edu.java;
+package edu.java.util.retry;
 
-import edu.java.builders.ExponentialRetryBuilder;
-import edu.java.builders.FixedRetryBuilder;
-import edu.java.builders.LinearRetryBuilder;
+import edu.java.configuration.RetryQueryConfiguration;
+import edu.java.util.retry.builders.ExponentialRetryBuilder;
+import edu.java.util.retry.builders.FixedRetryBuilder;
+import edu.java.util.retry.builders.LinearRetryBuilder;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
@@ -23,20 +24,20 @@ public class RetryFactory {
         RETRY_BUILDERS.put("exponential", new ExponentialRetryBuilder());
     }
 
-    public static ExchangeFilterFunction createFilter(Retry retry) {
+    public static ExchangeFilterFunction createFilter(RetryQueryConfiguration config, String target) {
         return (response, next) -> next.exchange(response)
             .flatMap(clientResponse -> {
-                if (clientResponse.statusCode().isError()) {
+                if (clientResponse.statusCode().isError()
+                    && config.targets().get(target).codes().contains(clientResponse.statusCode().value())) {
                     return clientResponse.createError();
                 } else {
                     return Mono.just(clientResponse);
                 }
-            }).retryWhen(retry);
+            }).retryWhen(createRetry(config, target));
     }
 
     public static Retry createRetry(RetryQueryConfiguration config, String target) {
-        return config.retries().stream().filter(element -> element.target().equals(target)).findFirst()
-            .map(element -> RETRY_BUILDERS.get(element.type()).apply(element))
-            .orElseThrow(() -> new IllegalStateException("Unknown target " + target));
+        RetryQueryConfiguration.RetryElement element = config.targets().get(target);
+        return RETRY_BUILDERS.get(element.type()).apply(element);
     }
 }
