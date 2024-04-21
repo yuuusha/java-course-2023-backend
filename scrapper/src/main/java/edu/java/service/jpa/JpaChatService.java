@@ -38,6 +38,7 @@ public class JpaChatService implements TelegramChatService {
                 linkRepository.delete(link);
             }
         }
+
         chatRepository.delete(tgChatEntity);
     }
 }

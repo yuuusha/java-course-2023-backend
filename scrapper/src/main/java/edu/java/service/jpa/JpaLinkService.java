@@ -1,7 +1,9 @@
 package edu.java.service.jpa;
 
 import edu.java.domain.jpa.entity.LinkEntity;
+import edu.java.domain.jpa.entity.LinkEntityMapper;
 import edu.java.domain.jpa.entity.TgChatEntity;
+import edu.java.domain.jpa.mappers.LinkEntityMapperImpl;
 import edu.java.dto.Chat;
 import edu.java.dto.Link;
 import edu.java.dto.response.LinkResponse;
@@ -51,42 +53,67 @@ public class JpaLinkService implements LinkService {
     @Transactional
     public LinkResponse addTrackingLink(URL link, Long chatId) {
         TgChatEntity chat = chatRepository.findById(chatId).orElseThrow(() -> new ChatNotFoundException(chatId));
-        String host = link.getHost();
-        String domain = host.replaceAll("^(www\\.)?|\\.com$", "");
-        InfoSupplier infoSupplier = infoSuppliers.getSupplierByTypeHost(domain);
-        if (infoSupplier == null || !infoSupplier.isSupported(link)) {
+
+        String domain = extractDomain(link);
+        InfoSupplier infoSupplier = getInfoSupplierForDomain(domain);
+
+        if (!infoSupplier.isSupported(link)) {
             throw new LinkIsNotSupportedException(link);
         }
 
+        LinkInfo linkInfo = fetchLinkInfo(infoSupplier, link);
+        OffsetDateTime lastUpdate = calculateLastUpdate(linkInfo);
+        LinkEntity linkEntity = createOrUpdateLinkEntity(link, linkInfo, lastUpdate);
+
+        chat.addLink(linkEntity);
+        return new LinkResponse(linkEntity.getId(), link);
+    }
+
+    private String extractDomain(URL link) {
+        String host = link.getHost();
+        return host.replaceAll("^(www\\.)?|\\.com$", "");
+    }
+
+    private InfoSupplier getInfoSupplierForDomain(String domain) {
+        InfoSupplier infoSupplier = infoSuppliers.getSupplierByTypeHost(domain);
+        if (infoSupplier == null) {
+            throw new LinkIsNotSupportedException(URLCreator.createURL(domain));
+        }
+        return infoSupplier;
+    }
+
+
+    private LinkInfo fetchLinkInfo(InfoSupplier infoSupplier, URL link) {
         LinkInfo linkInfo = infoSupplier.fetchInfo(link);
         if (linkInfo == null) {
             throw new LinkIsNotSupportedException(link);
         }
+        return linkInfo;
+    }
 
-        Optional<LinkEntity> linkOptional;
-        OffsetDateTime lastUpdate = OffsetDateTime.now();
+    private OffsetDateTime calculateLastUpdate(LinkInfo linkInfo) {
         if (!linkInfo.events().isEmpty()) {
-            lastUpdate = linkInfo.events().getFirst().lastUpdate();
+            return linkInfo.events().getFirst().lastUpdate();
         }
+        return OffsetDateTime.now();
+    }
 
-        LinkEntity linkEntity;
-        linkOptional = linkRepository.findByUrl(String.valueOf(linkInfo.url()));
+    private LinkEntity createOrUpdateLinkEntity(URL link, LinkInfo linkInfo, OffsetDateTime lastUpdate) {
+        Optional<LinkEntity> linkOptional = linkRepository.findByUrl(String.valueOf(linkInfo.url()));
         if (linkOptional.isPresent()) {
-            linkEntity = linkOptional.get();
+            LinkEntity linkEntity = linkOptional.get();
             linkEntity.setLastUpdate(lastUpdate);
             linkEntity.setLastCheck(OffsetDateTime.now());
             linkEntity.setMetaInfo(linkInfo.metaInfo());
-            chat.addLink(linkEntity);
-            return new LinkResponse(linkEntity.getId(), link);
+            return linkEntity;
+        } else {
+            return new LinkEntity(
+                String.valueOf(link),
+                lastUpdate,
+                OffsetDateTime.now(),
+                linkInfo.metaInfo()
+            );
         }
-        linkEntity = new LinkEntity(
-            String.valueOf(link),
-            lastUpdate,
-            OffsetDateTime.now(),
-            linkInfo.metaInfo()
-        );
-        chat.addLink(linkEntity);
-        return new LinkResponse(linkEntity.getId(), link);
     }
 
     @Override
@@ -105,8 +132,9 @@ public class JpaLinkService implements LinkService {
     @Override
     @Transactional
     public List<Link> getOldLinks(Duration afterDuration, int limit) {
+        LinkEntityMapper linkEntityMapper = new LinkEntityMapperImpl();
         return linkRepository.findAllByLastCheckBefore(OffsetDateTime.now().minus(afterDuration), Limit.of(limit))
-            .stream().map(LinkEntity::toDto).toList();
+            .stream().map(linkEntityMapper::linkEntityToLinkDTO).toList();
     }
 
     @Override
@@ -132,4 +160,5 @@ public class JpaLinkService implements LinkService {
         LinkEntity linkEntity = linkRepository.findById(linkId).orElseThrow(() -> new ChatNotFoundException(linkId));
         linkEntity.setLastCheck(OffsetDateTime.now());
     }
+
 }

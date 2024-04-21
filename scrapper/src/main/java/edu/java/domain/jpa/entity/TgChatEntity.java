@@ -9,6 +9,7 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import lombok.Getter;
 import lombok.Setter;
@@ -48,5 +49,28 @@ public class TgChatEntity {
     public void removeLink(LinkEntity link) {
         links.removeIf(linkEntity -> link.getId().equals(linkEntity.getId()));
         link.getTgChats().remove(this);
+    }
+
+    @Override public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        TgChatEntity chat = (TgChatEntity) o;
+        return Objects.equals(id, chat.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
+
+    @Override public String toString() {
+        return "TgChatEntity{"
+            + "id=" + id
+            + ", links=" + links
+            + '}';
     }
 }

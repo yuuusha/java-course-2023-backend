@@ -1,7 +1,5 @@
 package edu.java.domain.jpa.entity;
 
-import edu.java.dto.Link;
-import edu.java.util.URLCreator;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -12,6 +10,7 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import java.time.OffsetDateTime;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import lombok.Getter;
 import lombok.Setter;
@@ -25,7 +24,7 @@ public class LinkEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "link_id")
-    private Long id;
+    public Long id;
 
     private String url;
 
@@ -58,13 +57,29 @@ public class LinkEntity {
         this.tgChats = new HashSet<>();
     }
 
-    public Link toDto() {
-        return new Link(
-            id,
-            URLCreator.createURL(url),
-            lastUpdate,
-            lastCheck,
-            metaInfo
-        );
+    @Override public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        LinkEntity that = (LinkEntity) o;
+        return Objects.equals(id, that.id) && Objects.equals(url, that.url);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, url);
+    }
+
+    @Override public String toString() {
+        return "LinkEntity{"
+            + "id=" + id
+            + ", url='" + url + '\''
+            + ", lastUpdate=" + lastUpdate
+            + ", lastCheck=" + lastCheck
+            + ", metaInfo='" + metaInfo + '\''
+            + '}';
     }
 }
