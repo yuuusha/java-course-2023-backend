@@ -1,7 +1,7 @@
-package edu.java.builders;
+package edu.java.util.retry.builders;
 
-import edu.java.ErrorFilterPredicate;
-import edu.java.RetryQueryConfiguration;
+import edu.java.configuration.RetryQueryConfiguration;
+import edu.java.util.retry.ErrorFilterPredicate;
 import java.util.function.Function;
 import reactor.util.retry.Retry;
 import reactor.util.retry.RetryBackoffSpec;

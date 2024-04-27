@@ -1,4 +1,4 @@
-package edu.java;
+package edu.java.bot.util.retry;
 
 import java.time.Duration;
 import java.util.function.Predicate;

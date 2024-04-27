@@ -1,8 +1,8 @@
 package edu.java.scrapper.supplier.github;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
-import edu.java.RetryQueryConfiguration;
 import edu.java.configuration.ApplicationConfig;
+import edu.java.configuration.RetryQueryConfiguration;
 import edu.java.configuration.supplier.GithubConfig;
 import edu.java.configuration.supplier.GithubPatternConfig;
 import edu.java.supplier.api.LinkInfo;
@@ -10,6 +10,7 @@ import edu.java.supplier.github.GithubInfoSupplier;
 import java.net.URI;
 import java.time.Duration;
 import java.util.List;
+import java.util.Map;
 import lombok.SneakyThrows;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -33,8 +34,7 @@ public class GithubInfoSupplierTest {
     );
 
     private static final RetryQueryConfiguration RETRY_QUERY_CONFIGURATION = new RetryQueryConfiguration(
-        List.of(new RetryQueryConfiguration.RetryElement(
-                "github",
+        Map.of("github", new RetryQueryConfiguration.RetryElement(
                 "fixed",
                 1,
                 1,

@@ -47,13 +47,13 @@ scrapper:
   url: http://localhost:8080
 
 retry-query:
-  retries:
-    - target: scrapper
+  targets:
+    scrapper:
       type: exponential
       max-attempts: 5
       min-delay: 1s
       max-delay: 10s
-      codes: 500
+      codes: 429
 
 bucket4j:
   enabled: true
@@ -72,3 +72,17 @@ bucket4j:
 
 rate-limiter:
   whitelist: ${WHITELISTED_IPS:localhost}
+
+management:
+  metrics:
+    tags:
+      application: ${spring.application.name}
+  server:
+    port: 8001
+  endpoints:
+    web:
+      exposure:
+        include: health, info, prometheus
+      path-mapping:
+        prometheus: /metrics
+      base-path: '/'

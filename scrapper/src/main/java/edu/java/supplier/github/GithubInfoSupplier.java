@@ -1,13 +1,13 @@
 package edu.java.supplier.github;
 
-import edu.java.RetryFactory;
-import edu.java.RetryQueryConfiguration;
 import edu.java.configuration.ApplicationConfig;
+import edu.java.configuration.RetryQueryConfiguration;
 import edu.java.configuration.supplier.GithubConfig;
 import edu.java.supplier.api.LinkInfo;
 import edu.java.supplier.api.LinkUpdateEvent;
 import edu.java.supplier.api.WebClientInfoSupplier;
 import edu.java.supplier.github.data.GithubEventsCollector;
+import edu.java.util.retry.RetryFactory;
 import java.net.URL;
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -43,7 +43,7 @@ public class GithubInfoSupplier extends WebClientInfoSupplier {
                     headers.set("Authorization", "Bearer " + applicationConfig.githubToken());
                 }
             })
-            .filter(RetryFactory.createFilter(RetryFactory.createRetry(retryQueryConfiguration, TYPE_SUPPLIER)))
+            .filter(RetryFactory.createFilter(retryQueryConfiguration, TYPE_SUPPLIER))
             .build()
         );
         repositoryPattern = Pattern.compile(githubConfig.patterns().repository());

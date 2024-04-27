@@ -2,8 +2,7 @@ package edu.java.supplier.stackoverflow;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import edu.java.RetryFactory;
-import edu.java.RetryQueryConfiguration;
+import edu.java.configuration.RetryQueryConfiguration;
 import edu.java.configuration.supplier.StackOverflowConfig;
 import edu.java.supplier.api.EventResolver;
 import edu.java.supplier.api.LinkInfo;
@@ -43,7 +42,7 @@ public class StackOverflowInfoSupplier extends WebClientInfoSupplier {
         ObjectMapper mapper,
         RetryQueryConfiguration retryQueryConfiguration
     ) {
-        super(config.url(), RetryFactory.createRetry(retryQueryConfiguration, TYPE_SUPPLIER));
+        super(config.url(), retryQueryConfiguration, TYPE_SUPPLIER);
         questionsPattern = Pattern.compile(config.patterns().questions());
         this.mapper = mapper;
         eventResolver = new StackOverflowEventResolver();
