@@ -4,10 +4,8 @@ import edu.java.dto.Chat;
 import edu.java.repository.ChatRepository;
 import java.util.List;
 import org.jooq.DSLContext;
-import org.springframework.stereotype.Repository;
 import static edu.java.domain.jooq.Tables.CHAT;
 
-@Repository
 public class JooqChatRepository implements ChatRepository {
 
     private final DSLContext dslContext;

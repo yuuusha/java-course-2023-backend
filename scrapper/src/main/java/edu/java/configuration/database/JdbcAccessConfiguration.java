@@ -11,10 +11,26 @@ import edu.java.supplier.InfoSuppliers;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.jdbc.core.simple.JdbcClient;
 
 @Configuration
 @ConditionalOnProperty(prefix = "app", name = "database-access-type", havingValue = "jdbc")
 public class JdbcAccessConfiguration {
+
+    @Bean
+    public JdbcChatLinkRepository jdbcChatLinkRepository(JdbcClient client) {
+        return new JdbcChatLinkRepository(client);
+    }
+
+    @Bean
+    public JdbcChatRepository jdbcChatRepository(JdbcClient client) {
+        return new JdbcChatRepository(client);
+    }
+
+    @Bean
+    public JdbcLinkRepository jdbcLinkRepository(JdbcClient client) {
+        return new JdbcLinkRepository(client);
+    }
 
     @Bean
     public LinkService jdbcLinkService(
