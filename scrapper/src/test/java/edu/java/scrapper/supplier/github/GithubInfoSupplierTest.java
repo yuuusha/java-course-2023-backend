@@ -1,8 +1,8 @@
 package edu.java.scrapper.supplier.github;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
-import edu.java.configuration.RetryQueryConfiguration;
 import edu.java.configuration.ApplicationConfig;
+import edu.java.configuration.RetryQueryConfiguration;
 import edu.java.configuration.supplier.GithubConfig;
 import edu.java.configuration.supplier.GithubPatternConfig;
 import edu.java.supplier.api.LinkInfo;

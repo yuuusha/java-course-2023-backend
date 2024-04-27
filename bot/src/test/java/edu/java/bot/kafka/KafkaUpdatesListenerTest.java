@@ -1,10 +1,12 @@
 package edu.java.bot.kafka;
 
-
 import edu.java.bot.configuration.ApplicationConfig;
 import edu.java.bot.dto.request.LinkUpdate;
 import edu.java.bot.service.LinkUpdatesSenderService;
 import edu.java.bot.util.URLCreator;
+import java.time.Duration;
+import java.util.List;
+import java.util.Map;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -14,11 +16,6 @@ import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.kafka.core.KafkaTemplate;
-
-import java.time.Duration;
-import java.util.List;
-import java.util.Map;
-
 import static org.awaitility.Awaitility.await;
 
 @SpringBootTest

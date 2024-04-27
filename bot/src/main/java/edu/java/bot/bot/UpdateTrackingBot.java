@@ -10,27 +10,27 @@ import com.pengrad.telegrambot.request.SetMyCommands;
 import com.pengrad.telegrambot.response.BaseResponse;
 import edu.java.bot.commands.Command;
 import edu.java.bot.processors.MessageProcessor;
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
 import jakarta.annotation.PostConstruct;
 import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Component
+@RequiredArgsConstructor
 public class UpdateTrackingBot implements Bot {
 
     private final TelegramBot telegramBot;
     private final MessageProcessor userMessagesProcessor;
-
-    @Autowired
-    public UpdateTrackingBot(MessageProcessor userMessagesProcessor, TelegramBot telegramBot) {
-        this.userMessagesProcessor = userMessagesProcessor;
-        this.telegramBot = telegramBot;
-    }
+    private final MeterRegistry meterRegistry;
+    private Counter userMessagesCounter;
 
     @Override
     public int process(List<Update> updates) {
         updates.forEach(update -> {
             SendMessage sendMessage = userMessagesProcessor.process(update);
+            userMessagesCounter.increment();
             execute(sendMessage);
         });
         return UpdatesListener.CONFIRMED_UPDATES_ALL;
@@ -54,5 +54,12 @@ public class UpdateTrackingBot implements Bot {
     @Override
     public void close() {
         telegramBot.shutdown();
+    }
+
+    @PostConstruct
+    public void initMetrics() {
+        userMessagesCounter = Counter.builder("user_messages")
+            .description("Count of processed user messages")
+            .register(meterRegistry);
     }
 }
