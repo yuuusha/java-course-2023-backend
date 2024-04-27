@@ -5,6 +5,7 @@ app:
     force-check-delay: 20s
     max-links-per-check: 100
   github-token: ${GITHUB_TOKEN}
+  database-access-type: jdbc
 
 supplier:
   github:
@@ -25,6 +26,11 @@ spring:
     url: jdbc:postgresql://localhost:5432/scrapper
     username: postgres
     password: postgres
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+    show-sql: true
 
 server:
   port: 8080

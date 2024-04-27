@@ -15,9 +15,16 @@ import org.springframework.validation.annotation.Validated;
 @ConfigurationProperties(prefix = "app", ignoreUnknownFields = false)
 public record ApplicationConfig(
     @NotNull Scheduler scheduler,
-    String githubToken
+    String githubToken,
+    AccessType databaseAccessType
 ) {
     public record Scheduler(@NotNull boolean enable, @NotNull Duration interval, @NotNull Duration forceCheckDelay,
                             int maxLinksPerCheck) {
+    }
+
+    public enum AccessType {
+        JDBC,
+        JPA,
+        JOOQ
     }
 }
