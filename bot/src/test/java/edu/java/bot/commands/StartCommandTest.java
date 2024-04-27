@@ -7,8 +7,9 @@ import edu.java.bot.service.BotService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+
 import static edu.java.bot.Utils.createMockUpdate;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.Assert.assertEquals;
 
 public class StartCommandTest {
 
@@ -26,13 +27,11 @@ public class StartCommandTest {
     }
 
     @Test
-    public void startCommandTest() {
-        Mockito.when(textProcessor.process("command.start.message")).thenReturn("start");
-        Update update = createMockUpdate("/start", 1L);
-        Mockito.when(update.message().chat().firstName()).thenReturn("username");
-        SendMessage sendMessage = startCommand.handle(update);
-        Mockito.verify(botService, Mockito.times(1)).registerUser(1L);
-        assertEquals("start", sendMessage.getParameters().get("text"));
+    public void handleRegisterUserTest() {
+        Mockito.when(textProcessor.process("command.start.messages.success.first_hello_message")).thenReturn("Hello");
+        Update message = createMockUpdate("/start", 1L);
+        SendMessage sendMessage = startCommand.handle(message);
+        Mockito.verify(botService, Mockito.times(1)).registerUserIfNew(1L);
+        assertEquals("Hello", sendMessage.getParameters().get("text"));
     }
 }
-

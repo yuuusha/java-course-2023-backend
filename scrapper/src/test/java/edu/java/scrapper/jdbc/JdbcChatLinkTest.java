@@ -32,7 +32,7 @@ public class JdbcChatLinkTest extends IntegrationEnvironment {
 
     @BeforeEach
     void setUp() {
-        link = new Link(0L, URLCreator.createURL("https://google.com"), OffsetDateTime.MIN, OffsetDateTime.MAX);
+        link = new Link(0L, URLCreator.createURL("https://google.com"), OffsetDateTime.MIN, OffsetDateTime.MAX, "");
     }
 
     @Test
@@ -44,7 +44,7 @@ public class JdbcChatLinkTest extends IntegrationEnvironment {
         jdbcChatLinkRepository.add(41L, linkId);
         Assertions.assertThat(jdbcChatLinkRepository.findAllLinkByChatId(41L)).contains(
             link = new Link(
-                linkId, URLCreator.createURL("https://google.com"), OffsetDateTime.MIN, OffsetDateTime.MAX
+                linkId, URLCreator.createURL("https://google.com"), OffsetDateTime.MIN, OffsetDateTime.MAX, ""
             )
         );
     }
@@ -68,7 +68,8 @@ public class JdbcChatLinkTest extends IntegrationEnvironment {
         jdbcChatLinkRepository.add(41L, linkId);
         jdbcChatLinkRepository.remove(41L, linkId);
         Assertions.assertThat(jdbcChatLinkRepository.findAllLinkByChatId(41L)).doesNotContain(
-            link = new Link(linkId, URLCreator.createURL("https://google.com"), OffsetDateTime.MIN, OffsetDateTime.MAX)
+            link =
+                new Link(linkId, URLCreator.createURL("https://google.com"), OffsetDateTime.MIN, OffsetDateTime.MAX, "")
         );
     }
 }

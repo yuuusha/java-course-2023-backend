@@ -20,4 +20,6 @@ public interface ChatLinkRepository {
     void removeAllByChatId(Long chatId);
 
     boolean isExists(Long chatId, Long linkId);
+
+    boolean isExists(Long chatId, URL url);
 }

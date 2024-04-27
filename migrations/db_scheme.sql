@@ -12,6 +12,7 @@ create table if not exists link
     url             text                        not null,
     last_update     timestamp with time zone    not null,
     last_check      timestamp                   not null,
+    meta_info       text,
 
     primary key (link_id),
     unique(url)

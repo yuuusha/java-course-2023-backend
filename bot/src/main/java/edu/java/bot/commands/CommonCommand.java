@@ -12,4 +12,8 @@ public abstract class CommonCommand implements Command {
         this.botService = linksManager;
         this.textProcessor = textProcessor;
     }
+
+    boolean isEmptyArgument(String[] elements) {
+        return elements.length == 1;
+    }
 }

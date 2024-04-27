@@ -2,7 +2,7 @@ package edu.java.bot.commands;
 
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
-import edu.java.bot.client.scrapper.dto.response.ListLinksResponse;
+import edu.java.bot.client.scrapper.dto.response.LinkResponse;
 import edu.java.bot.processors.TextProcessor;
 import edu.java.bot.service.BotService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,14 +29,16 @@ public class ListCommand extends CommonCommand {
     @Override
     public SendMessage handle(Update update) {
         Long chatId = update.message().chat().id();
-        ListLinksResponse listLinksResponse = botService.getListLinks(chatId);
-        if (listLinksResponse.links().isEmpty()) {
-            return new SendMessage(chatId, textProcessor.process("command.list.empty"));
+        if (botService.userLinks(chatId).answer().links().isEmpty()) {
+            return new SendMessage(chatId, textProcessor.process("command.list.messages.empty_list_of_links"));
         }
-        StringBuilder response = new StringBuilder();
-        for (int i = 0; i < listLinksResponse.links().size(); i++) {
-            response.append("\n").append(i + 1).append(". ").append(listLinksResponse.links().get(i).url());
+        StringBuilder linksString = new StringBuilder();
+        linksString.append(textProcessor.process("command.list.messages.show_tracked_links"));
+        int id = 1;
+        for (LinkResponse link : botService.userLinks(chatId).answer().links()) {
+            linksString.append(id).append(". ").append(link.url()).append("\n");
+            id++;
         }
-        return new SendMessage(chatId, String.format(textProcessor.process("command.list.get"), response));
+        return new SendMessage(chatId, String.valueOf(linksString));
     }
 }
