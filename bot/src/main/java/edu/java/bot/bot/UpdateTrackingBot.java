@@ -28,16 +28,6 @@ public class UpdateTrackingBot implements Bot {
     }
 
     @Override
-    public <T extends BaseRequest<T, R>, R extends BaseResponse> void execute(BaseRequest<T, R> request) {
-        if (telegramBot == null) {
-            throw new IllegalStateException("Telegram bot is not working");
-        }
-        if (request != null) {
-            telegramBot.execute(request);
-        }
-    }
-
-    @Override
     public int process(List<Update> updates) {
         updates.forEach(update -> {
             SendMessage sendMessage = userMessagesProcessor.process(update);
@@ -52,6 +42,13 @@ public class UpdateTrackingBot implements Bot {
         execute(new SetMyCommands((userMessagesProcessor.commands().stream().map(Command::toApiCommand).toList()
             .toArray(new BotCommand[0]))));
         telegramBot.setUpdatesListener(this);
+    }
+
+    public <T extends BaseRequest<T, R>, R extends BaseResponse> void execute(BaseRequest<T, R> request) {
+        if (telegramBot == null) {
+            throw new IllegalStateException("Telegram bot is not working");
+        }
+        telegramBot.execute(request);
     }
 
     @Override
