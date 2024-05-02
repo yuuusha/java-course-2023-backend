@@ -1,5 +1,5 @@
 FROM openjdk:21 as builder
-COPY scrapper/target/scrapper.jar .
+COPY target/scrapper.jar .
 RUN java -Djarmode=layertools -jar scrapper.jar extract
 
 FROM openjdk:21-slim

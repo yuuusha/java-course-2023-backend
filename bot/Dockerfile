@@ -1,5 +1,5 @@
 FROM openjdk:21 as builder
-COPY bot/target/bot.jar .
+COPY target/bot.jar .
 RUN java -Djarmode=layertools -jar bot.jar extract
 
 FROM openjdk:21-slim
