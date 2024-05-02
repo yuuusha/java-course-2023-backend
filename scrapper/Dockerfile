@@ -1,7 +1,13 @@
-FROM openjdk:21
+FROM openjdk:21 as builder
+COPY scrapper/target/scrapper.jar .
+RUN java -Djarmode=layertools -jar scrapper.jar extract
+
+FROM openjdk:21-slim
 LABEL authors="yuuusha"
-WORKDIR /app
-COPY target/scrapper.jar /app/scrapper.jar
+COPY --from=builder dependencies/ ./
+COPY --from=builder snapshot-dependencies/ ./
+COPY --from=builder spring-boot-loader/ ./
+COPY --from=builder application/ ./
 EXPOSE 8090
 EXPOSE 8001
-CMD ["java", "-jar", "bot.jar"]
+ENTRYPOINT ["java", "org.springframework.boot.loader.launch.JarLauncher"]
